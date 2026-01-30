@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 团队协作规范
+    url: https://github.com/pleamon/team/blob/main/CONTRIBUTING.md
+    about: 查看项目协作规范和 Label 使用指南
