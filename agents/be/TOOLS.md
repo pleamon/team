@@ -134,7 +134,7 @@ gh issue list --assignee @me --repo "pleamon/team"
 ```bash
 # 开始任务
 gh issue edit 123 --add-label "status:in-progress" --repo "pleamon/team"
-gh issue comment 123 --body "开始开发，预计 X 完成" --repo "pleamon/team"
+gh issue comment 123 --body "开始开发。执行计划：<步骤>；预期产出：<路径/链接>；风险/依赖：<无/说明>" --repo "pleamon/team"
 
 # 任务阻塞
 gh issue edit 123 --add-label "status:blocked" --repo "pleamon/team"

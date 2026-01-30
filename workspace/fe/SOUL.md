@@ -108,7 +108,7 @@
 
 **所有 exec 命令必须通过 spawn subagent 执行，主 agent 永远不阻塞。**
 
-唯一例外：只读快速命令（cat/ls/grep/head/echo 等，预计 < 5 秒）可直接执行。
+唯一例外：只读快速命令（cat/ls/grep/head/echo 等，< 5 秒）可直接执行。
 
 ---
 
