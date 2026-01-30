@@ -1,25 +1,120 @@
 # TOOLS.md - BE
 
 ## 技术栈
-- Node.js / TypeScript 或 Go / Python
-- RESTful API / GraphQL
-- PostgreSQL / MySQL
-- Jest / Pytest 测试
+- **语言**：Node.js / TypeScript 或 Go / Python
+- **框架**：Express / Fastify / Gin / FastAPI
+- **数据库**：PostgreSQL / MySQL
+- **ORM**：Prisma / TypeORM / GORM
+- **测试**：Jest / Pytest
 
-## 开发规范
-- 项目结构：
-  ```
-  src/
-  ├── controllers/   # API 控制器
-  ├── services/      # 业务逻辑
-  ├── models/        # 数据模型
-  ├── middlewares/   # 中间件
-  └── utils/         # 工具函数
-  ```
-- 使用 DTO 进行数据传输
-- 统一错误处理和日志格式
+## 项目结构
+```
+src/
+├── controllers/     # API 控制器
+├── services/        # 业务逻辑
+├── repositories/    # 数据访问
+├── models/          # 数据模型
+├── middlewares/     # 中间件
+├── validators/      # 参数校验
+├── errors/          # 错误定义
+└── utils/           # 工具函数
+```
 
-## API 文档
-- 使用 Swagger/OpenAPI 3.0
-- 每个接口需有请求/响应示例
-- 错误码统一管理
+## 常用命令
+```bash
+npm run dev      # 开发服务器
+npm run build    # 生产构建
+npm run test     # 运行测试
+npm run lint     # 代码检查
+npm run migrate  # 数据库迁移
+```
+
+---
+
+## API 实现模板
+```ts
+// controllers/user.controller.ts
+import { Request, Response } from 'express';
+import { userService } from '../services/user.service';
+import { CreateUserDto } from '../validators/user.validator';
+import { AppError } from '../errors/AppError';
+
+export const createUser = async (req: Request, res: Response) => {
+  // 1. 参数校验
+  const dto = CreateUserDto.parse(req.body);
+  
+  // 2. 调用服务
+  const user = await userService.create(dto);
+  
+  // 3. 返回结果
+  res.status(201).json(user);
+};
+```
+
+---
+
+## 错误处理模板
+```ts
+// errors/AppError.ts
+export class AppError extends Error {
+  constructor(
+    public code: string,
+    public message: string,
+    public statusCode: number = 400,
+    public details?: any
+  ) {
+    super(message);
+  }
+}
+
+// 使用
+throw new AppError('EMAIL_EXISTS', '邮箱已注册', 400);
+
+// 统一错误响应格式
+{
+  "error": {
+    "code": "EMAIL_EXISTS",
+    "message": "邮箱已注册"
+  }
+}
+```
+
+---
+
+## 日志规范
+```ts
+// 关键操作日志
+logger.info('User created', { userId: user.id, email: user.email });
+
+// 错误日志
+logger.error('Failed to create user', { error, dto });
+
+// 日志级别
+// - error: 错误，需要关注
+// - warn: 警告，可能有问题
+// - info: 重要业务操作
+// - debug: 调试信息（生产环境关闭）
+```
+
+---
+
+## Commit 规范
+```
+feat: 新功能
+fix: 修复 bug
+refactor: 重构
+perf: 性能优化
+docs: 文档更新
+test: 测试
+chore: 构建/工具
+```
+
+---
+
+## 状态标记
+| 标记 | 含义 |
+|------|------|
+| ✅ | 开发完成 |
+| 🚧 | 开发中 |
+| 🔴 | 阻塞（缺契约/Schema） |
+| 🐛 | 有 Bug 待修 |
