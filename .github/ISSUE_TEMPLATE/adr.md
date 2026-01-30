@@ -2,7 +2,7 @@
 name: ADR（架构决策记录）
 about: 技术方案决策
 title: '[ADR] '
-labels: 'role:arch,type:docs'
+labels: 'role:arch,type:architecture'
 assignees: ''
 ---
 
@@ -35,3 +35,7 @@ assignees: ''
 - BE: 
 - DBA: 
 - Infra: 
+
+## 回归测试建议
+<!-- QA 需要重点验证的场景 -->
+- 

@@ -82,6 +82,8 @@ Repository（项目仓库）
 | `type:docs` | 文档 |
 | `type:refactor` | 重构 |
 | `type:test` | 测试 |
+| `type:architecture` | ADR、API 契约、数据模型设计 |
+| `type:tech-debt` | 技术债跟踪 |
 
 ### 状态 Labels
 | Label | 描述 |
