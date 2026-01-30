@@ -4,14 +4,29 @@ version: 1.0.0
 
 Slack 高级功能扩展。通过 User Token 调用 Slack API，实现 Canvas、Reminder、DND、Status、Usergroup、Search、Bookmark 等功能。
 
-## 前置条件
+## User Token 获取
 
-### User Token
-需要有 `xoxp-` 开头的 User Token（不是 Bot Token `xoxb-`）。
+User Token 存储在 OpenClaw 配置中，路径：
+```
+~/.openclaw/openclaw.json → channels.slack.accounts.<agent>.userToken
+```
 
-获取方式：
-1. 创建 Slack App，启用 User Token Scopes
-2. 安装到 Workspace，获取 User OAuth Token
+### 获取当前 Agent 的 User Token
+```bash
+# 方法1: 使用 jq
+AGENT_NAME="alex"  # 替换为当前 agent 名称
+SLACK_USER_TOKEN=$(cat ~/.openclaw/openclaw.json | jq -r ".channels.slack.accounts.${AGENT_NAME}.userToken")
+
+# 方法2: 使用 python
+SLACK_USER_TOKEN=$(python3 -c "
+import json
+with open('$HOME/.openclaw/openclaw.json') as f:
+    data = json.load(f)
+print(data['channels']['slack']['accounts']['${AGENT_NAME}']['userToken'])
+")
+
+echo $SLACK_USER_TOKEN  # 应该是 xoxp-... 格式
+```
 
 ### 所需 Scopes
 | 功能 | 所需 Scope |
@@ -26,13 +41,24 @@ Slack 高级功能扩展。通过 User Token 调用 Slack API，实现 Canvas、
 
 ---
 
-## 使用方式
+## 快速开始
 
-所有 API 调用通过 `exec` 执行 `curl` 命令。
-
-### 环境变量
+### 一键获取 Token 并设置
 ```bash
-export SLACK_USER_TOKEN="xoxp-your-user-token"
+# 在脚本开头加入（替换 alex 为你的 agent 名称）
+AGENT_NAME="alex"
+SLACK_USER_TOKEN=$(cat ~/.openclaw/openclaw.json | jq -r ".channels.slack.accounts.${AGENT_NAME}.userToken")
+```
+
+### 或者创建辅助函数
+```bash
+get_slack_token() {
+  local agent="${1:-alex}"
+  cat ~/.openclaw/openclaw.json | jq -r ".channels.slack.accounts.${agent}.userToken"
+}
+
+# 使用
+SLACK_USER_TOKEN=$(get_slack_token alex)
 ```
 
 ---
@@ -90,11 +116,7 @@ curl -X POST "https://slack.com/api/canvases.sections.lookup" \
 
 ### 在频道中设置 Canvas
 ```bash
-# 获取频道信息（包含 canvas_id）
-curl -X GET "https://slack.com/api/conversations.info?channel=C0123456789" \
-  -H "Authorization: Bearer $SLACK_USER_TOKEN"
-
-# 创建频道 Canvas（如果没有）
+# 创建频道 Canvas
 curl -X POST "https://slack.com/api/conversations.canvases.create" \
   -H "Authorization: Bearer $SLACK_USER_TOKEN" \
   -H "Content-Type: application/json" \
@@ -113,7 +135,7 @@ curl -X POST "https://slack.com/api/conversations.canvases.create" \
 
 ### 创建提醒
 ```bash
-# 在指定时间提醒
+# 在指定时间提醒（Unix timestamp）
 curl -X POST "https://slack.com/api/reminders.add" \
   -H "Authorization: Bearer $SLACK_USER_TOKEN" \
   -H "Content-Type: application/json" \
@@ -122,7 +144,7 @@ curl -X POST "https://slack.com/api/reminders.add" \
     "time": "1700000000"
   }'
 
-# 在指定时间提醒（使用自然语言）
+# 使用自然语言时间
 curl -X POST "https://slack.com/api/reminders.add" \
   -H "Authorization: Bearer $SLACK_USER_TOKEN" \
   -H "Content-Type: application/json" \
@@ -170,7 +192,6 @@ curl -X POST "https://slack.com/api/reminders.complete" \
 
 ### 开启勿扰
 ```bash
-# 开启指定分钟数
 curl -X POST "https://slack.com/api/dnd.setSnooze" \
   -H "Authorization: Bearer $SLACK_USER_TOKEN" \
   -H "Content-Type: application/json" \
@@ -198,10 +219,6 @@ curl -X GET "https://slack.com/api/dnd.info" \
 # 查询其他用户
 curl -X GET "https://slack.com/api/dnd.info?user=U0123456789" \
   -H "Authorization: Bearer $SLACK_USER_TOKEN"
-
-# 批量查询
-curl -X GET "https://slack.com/api/dnd.teamInfo?users=U0123456789,U0987654321" \
-  -H "Authorization: Bearer $SLACK_USER_TOKEN"
 ```
 
 ---
@@ -218,18 +235,6 @@ curl -X POST "https://slack.com/api/users.profile.set" \
       "status_text": "专注工作中",
       "status_emoji": ":headphones:",
       "status_expiration": 0
-    }
-  }'
-
-# 带过期时间（Unix timestamp）
-curl -X POST "https://slack.com/api/users.profile.set" \
-  -H "Authorization: Bearer $SLACK_USER_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "profile": {
-      "status_text": "午餐",
-      "status_emoji": ":fork_and_knife:",
-      "status_expiration": 1700000000
     }
   }'
 ```
@@ -286,21 +291,6 @@ curl -X POST "https://slack.com/api/usergroups.users.update" \
   }'
 ```
 
-### 启用/禁用用户组
-```bash
-# 启用
-curl -X POST "https://slack.com/api/usergroups.enable" \
-  -H "Authorization: Bearer $SLACK_USER_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"usergroup": "S0123456789"}'
-
-# 禁用
-curl -X POST "https://slack.com/api/usergroups.disable" \
-  -H "Authorization: Bearer $SLACK_USER_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"usergroup": "S0123456789"}'
-```
-
 ---
 
 ## Search（搜索）
@@ -309,22 +299,6 @@ curl -X POST "https://slack.com/api/usergroups.disable" \
 ```bash
 curl -X GET "https://slack.com/api/search.messages?query=关键词&count=20" \
   -H "Authorization: Bearer $SLACK_USER_TOKEN"
-
-# 高级搜索（指定频道、时间范围等）
-curl -X GET "https://slack.com/api/search.messages?query=in:general+from:@alex+关键词&sort=timestamp" \
-  -H "Authorization: Bearer $SLACK_USER_TOKEN"
-```
-
-### 搜索文件
-```bash
-curl -X GET "https://slack.com/api/search.files?query=报告" \
-  -H "Authorization: Bearer $SLACK_USER_TOKEN"
-```
-
-### 搜索全部（消息+文件）
-```bash
-curl -X GET "https://slack.com/api/search.all?query=关键词" \
-  -H "Authorization: Bearer $SLACK_USER_TOKEN"
 ```
 
 ### 搜索语法
@@ -332,12 +306,16 @@ curl -X GET "https://slack.com/api/search.all?query=关键词" \
 |------|------|------|
 | `in:channel` | 指定频道 | `in:general` |
 | `from:@user` | 指定发送者 | `from:@alex` |
-| `to:@user` | 发给某人 | `to:@me` |
 | `before:date` | 之前 | `before:2024-01-01` |
 | `after:date` | 之后 | `after:2024-01-01` |
 | `has:star` | 有星标 | `has:star` |
 | `has:link` | 有链接 | `has:link` |
-| `has:reaction` | 有反应 | `has::thumbsup:` |
+
+### 搜索文件
+```bash
+curl -X GET "https://slack.com/api/search.files?query=报告" \
+  -H "Authorization: Bearer $SLACK_USER_TOKEN"
+```
 
 ---
 
@@ -364,18 +342,6 @@ curl -X POST "https://slack.com/api/bookmarks.list" \
   -d '{"channel_id": "C0123456789"}'
 ```
 
-### 编辑书签
-```bash
-curl -X POST "https://slack.com/api/bookmarks.edit" \
-  -H "Authorization: Bearer $SLACK_USER_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "channel_id": "C0123456789",
-    "bookmark_id": "Bk0123456789",
-    "title": "新标题"
-  }'
-```
-
 ### 删除书签
 ```bash
 curl -X POST "https://slack.com/api/bookmarks.remove" \
@@ -392,93 +358,93 @@ curl -X POST "https://slack.com/api/bookmarks.remove" \
 ## 辅助脚本
 
 ### slackex.sh
-可以创建一个辅助脚本简化调用：
+将此脚本放在 workspace 中方便调用：
 
 ```bash
 #!/bin/bash
 # slackex.sh - Slack Extended API Helper
-# Usage: ./slackex.sh <action> [params...]
+# Usage: ./slackex.sh <agent> <action> [params...]
+# Example: ./slackex.sh alex canvas-create "标题" "# 内容"
 
-SLACK_USER_TOKEN="${SLACK_USER_TOKEN:?请设置 SLACK_USER_TOKEN 环境变量}"
+set -e
+
+AGENT="${1:?Usage: ./slackex.sh <agent> <action> [params...]}"
+ACTION="${2:?Missing action}"
+shift 2
+
+# 从 openclaw.json 获取 token
+SLACK_USER_TOKEN=$(cat ~/.openclaw/openclaw.json | jq -r ".channels.slack.accounts.${AGENT}.userToken")
+
+if [ "$SLACK_USER_TOKEN" = "null" ] || [ -z "$SLACK_USER_TOKEN" ]; then
+  echo "Error: 未找到 agent '$AGENT' 的 userToken"
+  exit 1
+fi
+
 BASE_URL="https://slack.com/api"
 
-case "$1" in
+case "$ACTION" in
   canvas-create)
     curl -sX POST "$BASE_URL/canvases.create" \
       -H "Authorization: Bearer $SLACK_USER_TOKEN" \
       -H "Content-Type: application/json" \
-      -d "{\"title\": \"$2\", \"document_content\": {\"type\": \"markdown\", \"markdown\": \"$3\"}}"
+      -d "{\"title\": \"$1\", \"document_content\": {\"type\": \"markdown\", \"markdown\": \"$2\"}}"
     ;;
   reminder-add)
     curl -sX POST "$BASE_URL/reminders.add" \
       -H "Authorization: Bearer $SLACK_USER_TOKEN" \
       -H "Content-Type: application/json" \
-      -d "{\"text\": \"$2\", \"time\": \"$3\"}"
+      -d "{\"text\": \"$1\", \"time\": \"$2\"}"
     ;;
   dnd-snooze)
     curl -sX POST "$BASE_URL/dnd.setSnooze" \
       -H "Authorization: Bearer $SLACK_USER_TOKEN" \
       -H "Content-Type: application/json" \
-      -d "{\"num_minutes\": $2}"
+      -d "{\"num_minutes\": $1}"
+    ;;
+  dnd-end)
+    curl -sX POST "$BASE_URL/dnd.endSnooze" \
+      -H "Authorization: Bearer $SLACK_USER_TOKEN"
     ;;
   status-set)
     curl -sX POST "$BASE_URL/users.profile.set" \
       -H "Authorization: Bearer $SLACK_USER_TOKEN" \
       -H "Content-Type: application/json" \
-      -d "{\"profile\": {\"status_text\": \"$2\", \"status_emoji\": \"$3\"}}"
+      -d "{\"profile\": {\"status_text\": \"$1\", \"status_emoji\": \"$2\"}}"
+    ;;
+  status-clear)
+    curl -sX POST "$BASE_URL/users.profile.set" \
+      -H "Authorization: Bearer $SLACK_USER_TOKEN" \
+      -H "Content-Type: application/json" \
+      -d '{"profile": {"status_text": "", "status_emoji": ""}}'
     ;;
   search)
-    curl -sX GET "$BASE_URL/search.messages?query=$(echo "$2" | jq -sRr @uri)&count=20" \
+    curl -sX GET "$BASE_URL/search.messages?query=$(echo "$1" | jq -sRr @uri)&count=20" \
       -H "Authorization: Bearer $SLACK_USER_TOKEN"
     ;;
   *)
-    echo "Usage: ./slackex.sh <action> [params...]"
-    echo "Actions: canvas-create, reminder-add, dnd-snooze, status-set, search"
+    echo "Unknown action: $ACTION"
+    echo "Available: canvas-create, reminder-add, dnd-snooze, dnd-end, status-set, status-clear, search"
+    exit 1
     ;;
 esac
 ```
 
----
-
-## 常见用例
-
-### 创建项目状态 Canvas
+### 使用示例
 ```bash
-curl -X POST "https://slack.com/api/canvases.create" \
-  -H "Authorization: Bearer $SLACK_USER_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "title": "Sprint 5 状态",
-    "document_content": {
-      "type": "markdown",
-      "markdown": "# Sprint 5 状态\n\n## 进行中 🚧\n- T-01: 用户注册 @FE\n- T-02: 注册 API @BE\n\n## 完成 ✅\n- T-00: PRD 编写\n\n## 阻塞 🔴\n- 无"
-    }
-  }'
-```
+# 创建 Canvas
+./slackex.sh alex canvas-create "项目状态" "# Sprint 5\n\n- 进行中..."
 
-### 设置专注模式
-```bash
-# 设置状态 + 开启 DND
-curl -X POST "https://slack.com/api/users.profile.set" \
-  -H "Authorization: Bearer $SLACK_USER_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"profile": {"status_text": "专注工作中", "status_emoji": ":headphones:"}}'
+# 创建提醒
+./slackex.sh alex reminder-add "检查进度" "in 2 hours"
 
-curl -X POST "https://slack.com/api/dnd.setSnooze" \
-  -H "Authorization: Bearer $SLACK_USER_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"num_minutes": 120}'
-```
+# 开启勿扰 60 分钟
+./slackex.sh alex dnd-snooze 60
 
-### 创建每日站会提醒
-```bash
-curl -X POST "https://slack.com/api/reminders.add" \
-  -H "Authorization: Bearer $SLACK_USER_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "text": "每日站会",
-    "time": "every weekday at 10am"
-  }'
+# 设置状态
+./slackex.sh alex status-set "专注中" ":headphones:"
+
+# 搜索消息
+./slackex.sh alex search "项目进度"
 ```
 
 ---
@@ -487,15 +453,8 @@ curl -X POST "https://slack.com/api/reminders.add" \
 
 所有 API 返回 JSON，检查 `ok` 字段：
 ```json
-{
-  "ok": true,
-  ...
-}
-
-{
-  "ok": false,
-  "error": "invalid_auth"
-}
+{"ok": true, ...}
+{"ok": false, "error": "invalid_auth"}
 ```
 
 常见错误：
