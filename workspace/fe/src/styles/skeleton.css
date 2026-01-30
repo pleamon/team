@@ -1,0 +1,21 @@
+/* Skeleton shimmer animation */
+@keyframes skeleton-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Skeleton tokens */
+:root {
+  --skeleton-base: #f0f0f0;
+  --skeleton-highlight: #e0e0e0;
+}
+
+[data-theme="dark"] {
+  --skeleton-base: #303030;
+  --skeleton-highlight: #3a3a3a;
+}
