@@ -2,12 +2,15 @@
 name: Test Case
 about: QA 测试用例
 title: '[TestCase] '
-labels: 'role:qa'
+labels: 'role:qa, qa:pending'
 assignees: ''
 ---
 
 ## 测试模块
 <!-- 测试哪个功能模块 -->
+
+## 优先级
+<!-- P0: 阻塞发布 / P1: 核心功能 / P2: 重要功能 / P3: 边缘场景 -->
 
 ## 关联需求
 <!-- 关联的 Feature Issue -->

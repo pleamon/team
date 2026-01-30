@@ -2,7 +2,7 @@
 name: QA Report
 about: QA 测试报告
 title: '[QA Report] '
-labels: 'role:qa'
+labels: 'role:qa, qa:pending'
 assignees: ''
 ---
 
@@ -27,9 +27,9 @@ assignees: ''
 
 ## 发现的 Bug
 
-| Bug ID | 严重程度 | 描述 | 状态 |
-|--------|----------|------|------|
-| #xxx | P0/P1/P2 |  | Open/Fixed |
+| Bug ID | 严重程度 | 描述 | 关联 Issue | 状态 |
+|--------|----------|------|-----------|------|
+| #xxx | P0/P1/P2 |  | #xxx | Open/Fixed |
 
 ## 回归测试
 <!-- 本轮回归测试的内容 -->
