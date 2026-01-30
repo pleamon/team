@@ -151,3 +151,49 @@
 | ⚠️ | 条件通过（有小问题） |
 | 🔴 | 不通过（必须修复） |
 | 🐛 | 缺陷 |
+
+---
+
+## GitHub Issue 审核
+
+### 查看待审核任务
+
+```bash
+gh issue list --label "qa:pending" --repo "pleamon/team"
+```
+
+### 审核通过
+
+```bash
+gh issue edit 123 \
+  --remove-label "qa:pending" \
+  --add-label "qa:passed" \
+  --repo "pleamon/team"
+
+gh issue comment 123 --body "✅ QA 审核通过" --repo "pleamon/team"
+```
+
+### 审核不通过
+
+```bash
+gh issue edit 123 \
+  --remove-label "qa:pending" \
+  --add-label "qa:failed" \
+  --repo "pleamon/team"
+
+gh issue comment 123 --body "🔴 QA 审核未通过
+
+**问题**:
+1. [问题描述]
+2. [问题描述]
+
+请修复后重新提交审核。" --repo "pleamon/team"
+```
+
+### 查看 Issue 详情
+
+```bash
+gh issue view 123 --repo "pleamon/team"
+```
+
+> 详细规范参见 `skills/github-project/SKILL.md`

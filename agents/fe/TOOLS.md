@@ -116,3 +116,41 @@ refactor(hooks): extract useAuth logic
 | 🚧 | 开发中 |
 | 🔴 | 阻塞（缺设计/接口） |
 | 🐛 | 有 Bug 待修 |
+
+---
+
+## GitHub Issue 任务管理
+
+### 查看分配给我的任务
+
+```bash
+gh issue list --assignee @me --repo "pleamon/team"
+```
+
+### 更新任务状态
+
+```bash
+# 开始任务
+gh issue edit 123 --add-label "status:in-progress" --repo "pleamon/team"
+gh issue comment 123 --body "开始开发，预计 X 完成" --repo "pleamon/team"
+
+# 任务阻塞
+gh issue edit 123 --add-label "status:blocked" --repo "pleamon/team"
+gh issue comment 123 --body "阻塞：[原因]" --repo "pleamon/team"
+
+# 完成，请求审核
+gh issue edit 123 \
+  --remove-label "status:in-progress" \
+  --add-label "status:review,qa:pending" \
+  --repo "pleamon/team"
+gh issue comment 123 --body "开发完成，请 @qa 审核\nPR: #456" --repo "pleamon/team"
+```
+
+### 提交代码关联 Issue
+
+```bash
+# Commit 消息引用 Issue（合并时自动关闭）
+git commit -m "feat(xxx): description. Closes #123"
+```
+
+> 详细规范参见 `skills/github-project/SKILL.md`

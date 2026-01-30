@@ -88,3 +88,44 @@ git push
 | P1 | 应该有 |
 | P2 | 可以有 |
 | P3 | 暂不做 |
+
+---
+
+## GitHub Issue 管理
+
+### 创建任务 Issue
+
+```bash
+# 功能任务
+gh issue create \
+  --title "用户注册页面" \
+  --body "## 描述\n实现用户注册页面\n\n## 验收标准\n- [ ] 表单验证\n- [ ] 提交成功提示" \
+  --label "role:fe,P1-critical,type:feature" \
+  --milestone "Sprint 1" \
+  --assignee "fe" \
+  --repo "pleamon/team"
+```
+
+### 查看 Sprint 任务
+
+```bash
+gh issue list --milestone "Sprint 1" --repo "pleamon/team"
+```
+
+### 分配任务
+
+```bash
+gh issue edit 123 --add-assignee fe --repo "pleamon/team"
+```
+
+### Issue 状态管理
+
+```bash
+# 标记等待审核
+gh issue edit 123 --add-label "qa:pending" --repo "pleamon/team"
+
+# 关闭任务
+gh issue close 123 --comment "已完成 ✅" --repo "pleamon/team"
+```
+
+> 详细规范参见 `skills/github-project/SKILL.md`
