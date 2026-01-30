@@ -10,6 +10,7 @@
 | [git-workflow](git-workflow/SKILL.md) | Git 分支策略、Commit 规范、PR 流程 | 全员 |
 | [slack-protocol](slack-protocol/SKILL.md) | Slack 沟通规范、消息模板、响应时效 | 全员 |
 | [code-review](code-review/SKILL.md) | 代码审查标准、审查清单、评论规范 | QA/FE/BE |
+| [slackex](slackex/SKILL.md) | Slack 高级功能（Canvas/Reminder/DND/Status/Search/Bookmark） | 全员 |
 
 ## 使用方式
 
