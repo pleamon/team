@@ -1,0 +1,12 @@
+# 运行时文件不纳入版本控制
+**/MEMORY.md
+**/BOOTSTRAP.md
+
+# OS 文件
+.DS_Store
+Thumbs.db
+
+# 敏感信息
+*.key
+*.pem
+*.env
