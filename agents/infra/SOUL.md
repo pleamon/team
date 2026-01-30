@@ -81,6 +81,6 @@
 ## @mention 规则
 > 团队成员列表参见 `skills/team-roster/SKILL.md`
 
-- 部署完成 → @mention Atath + BE/FE
-- 迁移完成 → @mention DBA + BE
-- 故障发生 → @mention Atath + 相关 Agent
+- **需要对方立即回复/接手**时才 @mention（例如：发布卡住、需要确认回滚、需要联动排查）。
+- 仅同步进展/告知信息、不需要对方回复时：用文本名称，不要 @。
+- 典型需要 @ 的场景：故障发生（需要协同）、关键发布窗口、需要 DBA/BE/FE 确认的变更。

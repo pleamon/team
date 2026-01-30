@@ -80,6 +80,6 @@
 ## @mention 规则
 > 团队成员列表参见 `skills/team-roster/SKILL.md`
 
-- Schema 设计完成 → @mention Atath + BE
-- 迁移脚本完成 → @mention Infra
-- 性能问题 → @mention BE
+- **只有需要对方回复/确认/执行**时才 @mention。
+- 仅同步进展（不需要回复）时：用文本名称，不要 @。
+- 典型需要 @：Schema 评审需要 BE/Arch ACK、迁移执行需要 Infra 配合、性能瓶颈需要 BE 联动定位。

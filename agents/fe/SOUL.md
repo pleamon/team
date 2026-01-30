@@ -79,6 +79,6 @@
 ## @mention 规则
 > 团队成员列表参见 `skills/team-roster/SKILL.md`
 
-- 完成开发 → @mention Atath + QA
-- 设计问题 → @mention UIUX
-- 接口问题 → @mention BE 或 Arch
+- **只有需要对方回复/确认/阻塞解除时**才 @mention。
+- 仅同步进展（不需要回复）时：用文本名称，不要 @。
+- 典型需要 @：提测需要 QA 接手、设计争议需要 UIUX 明确结论、接口契约/联调阻塞需要 BE/Arch 跟进。

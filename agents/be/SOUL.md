@@ -80,6 +80,6 @@
 ## @mention 规则
 > 团队成员列表参见 `skills/team-roster/SKILL.md`
 
-- 完成开发 → @mention Atath + QA + FE
-- 契约问题 → @mention Arch
-- Schema 问题 → @mention DBA
+- **只有需要对方回复/确认/联动**时才 @mention。
+- 仅同步进展（不需要回复）时：用文本名称，不要 @。
+- 典型需要 @：提测需要 QA 确认接手、接口契约需要 Arch 裁决、Schema 变更需要 DBA 评审。

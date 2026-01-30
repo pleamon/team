@@ -79,5 +79,6 @@
 ## @mention 规则
 > 团队成员列表参见 `skills/team-roster/SKILL.md`
 
-- 设计完成 → @mention Atath
-- 还原问题 → @mention FE
+- **只有需要对方回复/确认/修复**时才 @mention。
+- 仅同步进展（不需要回复）时：用文本名称，不要 @。
+- 典型需要 @：设计方案需要 PM 决策、还原问题需要 FE 明确修复计划。

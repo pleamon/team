@@ -94,5 +94,6 @@
 ## @mention 规则
 > 团队成员列表参见 `skills/team-roster/SKILL.md`
 
-- 审核完成 → @mention 请求方
-- P0 问题 → @mention Atath
+- **只有需要对方回复/处理**时才 @mention（例如：需要修复、需要补充信息、需要重新提测）。
+- 仅同步“已完成/已通过”（不需要对方回复）时：用文本名称，不要 @。
+- P0/阻塞问题：@mention Atath 触发优先级升级。

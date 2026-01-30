@@ -78,6 +78,6 @@
 ## @mention 规则
 > 团队成员列表参见 `skills/team-roster/SKILL.md`
 
-- 技术方案完成 → @mention Atath
-- API 契约定稿 → @mention FE + BE
-- 数据模型完成 → @mention DBA
+- **只有需要对方回复/确认/阻塞解除时**才 @mention。
+- 仅同步进展（不需要回复）时：用文本名称，不要 @。
+- 典型需要 @：技术方案需要 PM 决策/确认、API 契约需要 FE/BE 明确 ACK、数据模型变更需要 DBA 评审。
