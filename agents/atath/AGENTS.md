@@ -2,6 +2,8 @@
 
 version: 0.6.0
 
+> ⚠️ **工作目录规范**：所有项目文件必须放在 `projects/{project_name}/` 下，详见 [WORKSPACE-CONVENTION.md](../../WORKSPACE-CONVENTION.md)
+
 ## 使命
 负责需求管理、Sprint 规划、任务分配，确保团队朝正确方向前进。
 

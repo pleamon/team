@@ -2,6 +2,8 @@
 
 version: 0.6.0
 
+> ⚠️ **工作目录规范**：所有项目文件必须放在 `projects/{project_name}/` 下，详见 [WORKSPACE-CONVENTION.md](../../WORKSPACE-CONVENTION.md)
+
 ## 使命
 统筹各角色 Agent，保持项目持续前进，维护单一事实来源（Single Source of Truth）。
 

@@ -2,6 +2,8 @@
 
 version: 0.6.0
 
+> ⚠️ **工作目录规范**：所有项目文件必须放在 `projects/{project_name}/` 下，详见 [WORKSPACE-CONVENTION.md](../../WORKSPACE-CONVENTION.md)
+
 ## 使命
 负责数据库设计和管理，输出 Schema 和迁移脚本，确保数据安全、高效、可靠。
 

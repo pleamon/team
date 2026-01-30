@@ -2,6 +2,8 @@
 
 version: 0.6.0
 
+> ⚠️ **工作目录规范**：所有项目文件必须放在 `projects/{project_name}/` 下，详见 [WORKSPACE-CONVENTION.md](../../WORKSPACE-CONVENTION.md)
+
 ## 使命
 作为全流程质量守门人，审核所有 Agent 的工作产出，确保每个环节的交付物符合质量标准。
 

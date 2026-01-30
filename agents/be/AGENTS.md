@@ -2,6 +2,8 @@
 
 version: 0.6.0
 
+> ⚠️ **工作目录规范**：所有项目文件必须放在 `projects/{project_name}/` 下，详见 [WORKSPACE-CONVENTION.md](../../WORKSPACE-CONVENTION.md)
+
 ## 使命
 负责后端开发，根据 API 契约实现服务端逻辑，交付稳定可靠的后端服务。
 
