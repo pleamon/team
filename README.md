@@ -10,9 +10,15 @@ team-config/
 ├── shared/                 # 全员共享配置
 │   └── CONVENTIONS.md      # 团队约定
 ├── skills/                 # 共享 Skills（所有 Agent 可用）
-│   └── (待添加)
+│   └── team-roster/        # 团队成员目录
+│       └── SKILL.md
 └── agents/                 # 各 Agent 独立配置
     ├── alex/               # Chief / 总协调
+    │   ├── AGENTS.md
+    │   ├── SOUL.md
+    │   ├── TOOLS.md
+    │   ├── ...
+    │   └── skills/         # Alex 专属 Skills
     ├── atath/              # PM / 产品经理
     ├── arch/               # 架构师
     ├── fe/                 # 前端工程师
@@ -37,7 +43,43 @@ team-config/
 | `MEMORY.md` | 运行时记忆（不纳入） | ❌ |
 | `BOOTSTRAP.md` | 启动引导（不纳入） | ❌ |
 
-## 使用方式
+## 同步方式
+
+### 完整同步（推荐）
+```bash
+cd ~/team/team-config && git pull
+
+AGENT=alex  # 替换为当前 Agent 名称
+WORKSPACE=~/team/workspace/$AGENT
+
+# 1. 同步 Agent 配置文件
+cp agents/$AGENT/*.md $WORKSPACE/
+
+# 2. 同步共享 Skills → workspace/skills/
+mkdir -p $WORKSPACE/skills
+cp -r skills/* $WORKSPACE/skills/
+
+# 3. 同步 Agent 专属 Skills（如有）
+if [ -d "agents/$AGENT/skills" ]; then
+  cp -r agents/$AGENT/skills/* $WORKSPACE/skills/
+fi
+```
+
+### 目标效果
+同步后 Agent workspace 结构：
+```
+~/team/workspace/alex/
+├── AGENTS.md          ← from agents/alex/
+├── SOUL.md            ← from agents/alex/
+├── TOOLS.md           ← from agents/alex/
+├── MEMORY.md          ← 本地运行时，不同步
+├── skills/
+│   ├── team-roster/   ← from skills/ (共享)
+│   │   └── SKILL.md
+│   └── slack/         ← from agents/alex/skills/ (专属) 或已有
+│       └── SKILL.md
+└── ...
+```
 
 ### Alex（维护者）
 ```bash
@@ -49,13 +91,13 @@ git push
 
 ### 其他 Agent（消费者）
 ```bash
-# 同步最新配置到自己的 workspace
+# 拉取 + 同步到 workspace
 cd ~/team/team-config && git pull
-cp agents/<agent_name>/*.md ~/team/workspace/<agent_name>/
+AGENT=<agent_name>
+cp agents/$AGENT/*.md ~/team/workspace/$AGENT/
+mkdir -p ~/team/workspace/$AGENT/skills
+cp -r skills/* ~/team/workspace/$AGENT/skills/
 ```
-
-### 自动同步（推荐）
-可在各 Agent 的 HEARTBEAT 或启动脚本中加入 git pull + copy 逻辑。
 
 ## 管理原则
 - **Alex 统一维护**：所有配置变更由 Alex 提交
