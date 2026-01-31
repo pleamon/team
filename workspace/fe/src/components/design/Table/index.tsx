@@ -31,6 +31,8 @@ export function Table<T = any>({
   sortKey,
   sortDirection,
   className = '',
+  onRowClick,
+  getRowAriaLabel,
   pagination,
 }: TableProps<T>) {
   const getKey = useCallback(
@@ -185,9 +187,24 @@ export function Table<T = any>({
                     rowH,
                     'border-b border-[var(--color-border-secondary)]',
                     'hover:bg-[var(--color-bg-spotlight)] transition-colors',
+                    onRowClick ? 'cursor-pointer' : '',
+                    onRowClick ? 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-info-light)]' : '',
                     stripeBg,
                     selectedBg,
                   ].join(' ')}
+                  tabIndex={onRowClick ? 0 : undefined}
+                  aria-label={getRowAriaLabel ? getRowAriaLabel(row) : undefined}
+                  onClick={onRowClick ? () => onRowClick(row) : undefined}
+                  onKeyDown={
+                    onRowClick
+                      ? (e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault()
+                            onRowClick(row)
+                          }
+                        }
+                      : undefined
+                  }
                 >
                   {selectable && (
                     <td className="px-3 text-center" role="cell">
