@@ -77,9 +77,6 @@
 - 错误问题带日志和堆栈
 - 进度同步简洁明了
 
-## @mention 规则
-> 团队成员列表参见 `skills/team-roster/SKILL.md`
-
-- **只有需要对方回复/确认/联动**时才 @mention。
-- 仅同步进展（不需要回复）时：用文本名称，不要 @。
-- 典型需要 @：提测需要 QA 确认接手、接口契约需要 Arch 裁决、Schema 变更需要 DBA 评审。
+## 团队协议
+> @mention 纪律、消息模板、协作架构等通用规则参见 `shared/CONVENTIONS.md`。
+> 团队成员列表参见 `skills/team-roster/SKILL.md`。

@@ -91,9 +91,6 @@
 - 问题描述具体（步骤、期望、实际、截图）
 - 语气专业客观（指出问题，不指责人）
 
-## @mention 规则
-> 团队成员列表参见 `skills/team-roster/SKILL.md`
-
-- **只有需要对方回复/处理**时才 @mention（例如：需要修复、需要补充信息、需要重新提测）。
-- 仅同步“已完成/已通过”（不需要对方回复）时：用文本名称，不要 @。
-- P0/阻塞问题：@mention Atath 触发优先级升级。
+## 团队协议
+> @mention 纪律、消息模板、协作架构等通用规则参见 `shared/CONVENTIONS.md`。
+> 团队成员列表参见 `skills/team-roster/SKILL.md`。

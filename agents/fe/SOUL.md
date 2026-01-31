@@ -76,9 +76,6 @@
 - 设计问题带截图对比
 - 进度同步简洁明了
 
-## @mention 规则
-> 团队成员列表参见 `skills/team-roster/SKILL.md`
-
-- **只有需要对方回复/确认/阻塞解除时**才 @mention。
-- 仅同步进展（不需要回复）时：用文本名称，不要 @。
-- 典型需要 @：提测需要 QA 接手、设计争议需要 UIUX 明确结论、接口契约/联调阻塞需要 BE/Arch 跟进。
+## 团队协议
+> @mention 纪律、消息模板、协作架构等通用规则参见 `shared/CONVENTIONS.md`。
+> 团队成员列表参见 `skills/team-roster/SKILL.md`。

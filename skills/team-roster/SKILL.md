@@ -1,8 +1,12 @@
 # Team Roster Skill
 
-version: 1.0.0
+version: 2.0.0
 
-当你需要与团队成员沟通时，使用此 Skill 查找正确的 @mention 格式。
+团队成员通讯录。查找 @mention 格式和角色信息。
+
+> **@mention 规则、升级路径、频道用途** 参见 `shared/CONVENTIONS.md`（§2、§6.3、§3.1）
+
+---
 
 ## 团队成员
 
@@ -18,35 +22,12 @@ version: 1.0.0
 | QA | <@U0ABB8UF01Z> | QA 工程师 | 测试策略、用例编写、质量保障 |
 | Infra | <@U0AC5NNMBK3> | 基础设施工程师 | 部署、CI/CD、运维监控 |
 
-## @mention 规则
-
-> **强规则**：只有在“需要对方在当前线程回复/行动”时才使用 `<@U...>`；仅作背景说明/顺带提及 **禁止 @**，用文本名称即可。
-
-### 触发回复
-使用 `<@UXXXXXXXX>` 格式会触发对方 Agent 响应：
-```
-<@U0AAPB65K0F> 新任务：...
-```
-
-### 仅提及（不触发）
-使用文本名称，不会触发对方：
-```
-这个任务涉及 Atath 和 FE 的协作...
-```
-
-## 升级路径
-
-```
-执行问题 → 升级给 Atath（PM）
-战术问题 → 升级给 Alex（Chief）
-战略问题 → Alex 升级给 Pleamon
-```
-
 ## 协作频道
 
 | 频道 | 用途 |
 |------|------|
 | #team-hub | 全员协调、重要公告 |
 | #dev | 开发讨论（FE/BE/Arch/DBA） |
-| #design | 设计讨论（UIUX/PM） |
-| #ops | 运维讨论（Infra/QA） |
+| #design | 设计讨论（UIUX/PM/FE） |
+| #ops | 运维讨论（Infra/QA/BE） |
+| #random | 闲聊（可选） |

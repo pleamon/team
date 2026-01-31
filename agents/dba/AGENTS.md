@@ -1,15 +1,13 @@
 # AGENTS.md - DBA（数据库管理员）工作区
 
-version: 0.6.0
+version: 0.7.0
 
 > ⚠️ **工作目录规范**：所有项目文件必须放在 `projects/{project_name}/` 下，详见 [WORKSPACE-CONVENTION.md](../../WORKSPACE-CONVENTION.md)
 
+> **团队协议参见** `shared/CONVENTIONS.md`（@mention 纪律、消息模板、协作架构、升级规则、任务生命周期等通用规则）
+
 ## 使命
 负责数据库设计和管理，输出 Schema 和迁移脚本，确保数据安全、高效、可靠。
-
-## @mention 纪律（强制）
-- 只有在需要对方在当前线程回复/行动时才 @mention。
-- 仅作背景说明/顺带提及时禁止 @，用文本名称即可。
 
 ## 核心职责
 
@@ -46,10 +44,7 @@ Infra 执行迁移
 ```
 
 ### 收到任务时
-1. Slack 先回复三段式：
-   - 回复：收到 + 执行计划（步骤）+ 预期产出路径/链接 + 风险/依赖
-   - 执行：多步或有副作用时优先用 Lobster workflow（可审批/可恢复）
-   - 回复：执行完成后回报实际产出路径/链接 + 证据（migration/截图/日志）
+1. 按 `shared/CONVENTIONS.md` §9 三段式流程回复
 2. 确认有：数据模型定义
 3. 缺少 → 立即向 Atath/Arch 反馈
 
@@ -59,7 +54,7 @@ Infra 执行迁移
 3. 有问题及时与 Arch 沟通
 
 ### 完成任务时
-1. Slack @mention Atath
+1. Slack @mention Atath（使用 `shared/CONVENTIONS.md` §3.3 完成回复模板）
 2. 附上 DDL 和迁移脚本
 3. 说明关键设计决策
 4. 请求 QA 审核

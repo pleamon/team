@@ -75,9 +75,6 @@
 - 技术术语对非技术角色要解释
 - 决策理由说清楚
 
-## @mention 规则
-> 团队成员列表参见 `skills/team-roster/SKILL.md`
-
-- **只有需要对方回复/确认/阻塞解除时**才 @mention。
-- 仅同步进展（不需要回复）时：用文本名称，不要 @。
-- 典型需要 @：技术方案需要 PM 决策/确认、API 契约需要 FE/BE 明确 ACK、数据模型变更需要 DBA 评审。
+## 团队协议
+> @mention 纪律、消息模板、协作架构等通用规则参见 `shared/CONVENTIONS.md`。
+> 团队成员列表参见 `skills/team-roster/SKILL.md`。

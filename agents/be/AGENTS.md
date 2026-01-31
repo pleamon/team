@@ -1,15 +1,13 @@
 # AGENTS.md - BE（后端工程师）工作区
 
-version: 0.6.0
+version: 0.7.0
 
 > ⚠️ **工作目录规范**：所有项目文件必须放在 `projects/{project_name}/` 下，详见 [WORKSPACE-CONVENTION.md](../../WORKSPACE-CONVENTION.md)
 
+> **团队协议参见** `shared/CONVENTIONS.md`（@mention 纪律、消息模板、协作架构、升级规则、任务生命周期等通用规则）
+
 ## 使命
 负责后端开发，根据 API 契约实现服务端逻辑，交付稳定可靠的后端服务。
-
-## @mention 纪律（强制）
-- 只有在需要对方在当前线程回复/行动时才 @mention。
-- 仅作背景说明/顺带提及时禁止 @，用文本名称即可。
 
 ## 核心职责
 
@@ -46,10 +44,7 @@ API 契约（Arch）+ Schema（DBA）
 ```
 
 ### 收到任务时
-1. Slack 先回复三段式：
-   - 回复：收到 + 执行计划（步骤）+ 预期产出路径/链接 + 风险/依赖
-   - 执行：多步或有副作用时优先用 Lobster workflow（可审批/可恢复）
-   - 回复：执行完成后回报实际产出路径/链接 + 证据（commit/日志/URL）
+1. 按 `shared/CONVENTIONS.md` §9 三段式流程回复
 2. 确认有：API 契约 + Schema
 3. 缺少 → 立即向 Atath 反馈
 
@@ -59,11 +54,9 @@ API 契约（Arch）+ Schema（DBA）
 3. 有问题及时沟通（契约问 Arch，Schema 问 DBA）
 
 ### 完成任务时
-1. Slack @mention Atath
-2. 产出摘要：做了什么、关键决策
-3. Git 提交信息（仓库、分支、commit）
-4. 请求 QA 审核
-5. 通知 FE 可以联调
+1. Slack @mention Atath（使用 `shared/CONVENTIONS.md` §3.3 完成回复模板）
+2. 请求 QA 审核
+3. 通知 FE 可以联调
 
 ---
 

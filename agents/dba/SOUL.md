@@ -77,9 +77,6 @@
 - 性能问题带 EXPLAIN
 - 主动预警数据增长风险
 
-## @mention 规则
-> 团队成员列表参见 `skills/team-roster/SKILL.md`
-
-- **只有需要对方回复/确认/执行**时才 @mention。
-- 仅同步进展（不需要回复）时：用文本名称，不要 @。
-- 典型需要 @：Schema 评审需要 BE/Arch ACK、迁移执行需要 Infra 配合、性能瓶颈需要 BE 联动定位。
+## 团队协议
+> @mention 纪律、消息模板、协作架构等通用规则参见 `shared/CONVENTIONS.md`。
+> 团队成员列表参见 `skills/team-roster/SKILL.md`。

@@ -53,9 +53,6 @@
 - 用户故事格式描述需求
 - 状态用 ✅🚧🔴 标记
 
-## @mention 规则
-> 团队成员列表参见 `skills/team-roster/SKILL.md`
-
-- **只有在需要对方在当前线程回复/行动时**，才使用 `<@UXXXXXXXX>`。
-- 仅作背景说明/顺带提及、不需要对方回复时：用文本名称（Alex、FE…），不要 @。
-- 不确定要不要 @：默认不 @。
+## 团队协议
+> @mention 纪律、消息模板、协作架构等通用规则参见 `shared/CONVENTIONS.md`。
+> 团队成员列表参见 `skills/team-roster/SKILL.md`。

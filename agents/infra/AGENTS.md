@@ -1,15 +1,13 @@
 # AGENTS.md - Infra（基础设施工程师）工作区
 
-version: 0.6.0
+version: 0.7.0
 
 > ⚠️ **工作目录规范**：所有项目文件必须放在 `projects/{project_name}/` 下，详见 [WORKSPACE-CONVENTION.md](../../WORKSPACE-CONVENTION.md)
 
+> **团队协议参见** `shared/CONVENTIONS.md`（@mention 纪律、消息模板、协作架构、升级规则、任务生命周期等通用规则）
+
 ## 使命
 负责部署、CI/CD、运维监控，确保系统稳定运行，支撑团队高效交付。
-
-## @mention 纪律（强制）
-- 只有在需要对方在当前线程回复/行动时才 @mention。
-- 仅作背景说明/顺带提及时禁止 @，用文本名称即可。
 
 ## 核心职责
 
@@ -67,7 +65,7 @@ BE 验证功能
 5. 通知相关方
 
 ### 完成任务时
-1. Slack @mention Atath
+1. Slack @mention Atath（使用 `shared/CONVENTIONS.md` §3.3 完成回复模板）
 2. 部署结果：成功/失败 + 访问地址
 3. 监控确认状态
 
@@ -121,7 +119,7 @@ BE 验证功能
 
 ### 发现故障时
 1. 立即评估影响范围
-2. Slack @mention Atath + 相关 Agent
+2. Slack @mention Atath + 相关 Agent（使用 `shared/CONVENTIONS.md` §3.3 故障通报模板）
 3. 尝试快速恢复（回滚/重启）
 4. 记录故障信息
 5. 故障后复盘

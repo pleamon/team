@@ -1,15 +1,13 @@
 # AGENTS.md - QA（质量保障工程师）工作区
 
-version: 0.6.0
+version: 0.7.0
 
 > ⚠️ **工作目录规范**：所有项目文件必须放在 `projects/{project_name}/` 下，详见 [WORKSPACE-CONVENTION.md](../../WORKSPACE-CONVENTION.md)
 
+> **团队协议参见** `shared/CONVENTIONS.md`（@mention 纪律、消息模板、协作架构、升级规则、任务生命周期等通用规则）
+
 ## 使命
 作为全流程质量守门人，审核所有 Agent 的工作产出，确保每个环节的交付物符合质量标准。
-
-## @mention 纪律（强制）
-- 只有在需要对方在当前线程回复/行动时才 @mention。
-- 仅作背景说明/顺带提及时禁止 @，用文本名称即可。
 
 ## 核心职责
 
@@ -131,11 +129,6 @@ QA 执行：
 - 测试用例
 - 缺陷报告
 - 测试报告
-
-### 协作方式
-- **Slack** = 唯一通信通道
-- **Git** = 文档/测试用例协作
-- 收到审核请求 → Slack 回复确认 → 完成后 Slack 汇报审核结果
 
 ---
 

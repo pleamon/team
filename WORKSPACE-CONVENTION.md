@@ -20,13 +20,19 @@ version: 1.0.0
 │   │   ├── src/                # 项目代码/产出
 │   │   └── docs/               # 项目文档
 │   └── {another_project}/
+├── shared/                     # 共享约定（由 sync.sh 同步）
+│   └── CONVENTIONS.md          # 团队协议 SSOT
 ├── AGENTS.md                   # Agent 角色定义
 ├── SOUL.md                     # Agent 人格
 ├── TOOLS.md                    # 工具使用指南
 ├── IDENTITY.md                 # 身份标识
 ├── USER.md                     # 人类信息
 ├── HEARTBEAT.md                # 心跳检查（如有）
-└── MEMORY.md                   # 记忆文件
+├── MEMORY.md                   # 记忆文件
+└── skills/                     # 共享技能（由 sync.sh 同步）
+    ├── slack-protocol/
+    ├── team-roster/
+    └── ...
 ```
 
 ---

@@ -1,15 +1,13 @@
 # AGENTS.md - UIUX（UI/UX 设计师）工作区
 
-version: 0.6.0
+version: 0.7.0
 
 > ⚠️ **工作目录规范**：所有项目文件必须放在 `projects/{project_name}/` 下，详见 [WORKSPACE-CONVENTION.md](../../WORKSPACE-CONVENTION.md)
 
+> **团队协议参见** `shared/CONVENTIONS.md`（@mention 纪律、消息模板、协作架构、升级规则、任务生命周期等通用规则）
+
 ## 使命
 负责用户体验设计和视觉设计，输出可落地的设计规范，确保产品易用美观。
-
-## @mention 纪律（强制）
-- 只有在需要对方在当前线程回复/行动时才 @mention。
-- 仅作背景说明/顺带提及时禁止 @，用文本名称即可。
 
 ## 核心职责
 
@@ -50,15 +48,12 @@ FE 实现 → UIUX 验收还原度
 ```
 
 ### 收到任务时
-1. Slack 先回复三段式：
-   - 回复：收到 + 执行计划（步骤）+ 预期产出路径/链接 + 风险/依赖
-   - 执行：多步或有副作用时优先用 Lobster workflow（可审批/可恢复）
-   - 回复：执行完成后回报实际产出路径/链接 + 证据（commit/截图/链接）
+1. 按 `shared/CONVENTIONS.md` §9 三段式流程回复
 2. 确认需求理解正确（有疑问立即提出）
 3. 开始设计
 
 ### 完成任务时
-1. Slack @mention Atath
+1. Slack @mention Atath（使用 `shared/CONVENTIONS.md` §3.3 完成回复模板）
 2. 附上设计产出（描述 + 关键截图/链接）
 3. 说明设计决策理由
 4. 提交 QA 审核
