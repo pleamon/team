@@ -101,23 +101,25 @@ export default function TransactionsPage() {
           <p className="text-sm text-text-muted mt-0.5">View and manage all payment transactions</p>
         </div>
         
-        {/* DEV ONLY: State Toggles */}
-        <div className="flex items-center gap-2 bg-gray-100 p-1 rounded-lg">
-          <span className="text-xs font-medium px-2 text-gray-500">Dev:</span>
-          {(['data', 'loading', 'empty', 'error'] as const).map((state) => (
-            <button
-              key={state}
-              onClick={() => setViewState(state)}
-              className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${
-                viewState === state 
-                  ? 'bg-white text-primary-600 shadow-sm' 
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              {state.charAt(0).toUpperCase() + state.slice(1)}
-            </button>
-          ))}
-        </div>
+        {/* DEV ONLY: State Toggles (Hidden in Prod) */}
+        {process.env.NODE_ENV !== 'production' && (
+          <div className="flex items-center gap-2 bg-yellow-50 border border-yellow-200 p-1 rounded-lg">
+            <span className="text-xs font-bold px-2 text-yellow-700">DEV TOOL:</span>
+            {(['data', 'loading', 'empty', 'error'] as const).map((state) => (
+              <button
+                key={state}
+                onClick={() => setViewState(state)}
+                className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${
+                  viewState === state 
+                    ? 'bg-white text-primary-600 shadow-sm' 
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                {state.charAt(0).toUpperCase() + state.slice(1)}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Quick Stats */}
@@ -181,6 +183,7 @@ export default function TransactionsPage() {
           data={data} 
           loading={isLoading}
           error={error}
+          onRetry={() => setViewState('loading')}
         />
       </div>
     </div>

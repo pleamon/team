@@ -15,6 +15,7 @@ interface DataTableProps<T = any> {
   loading?: boolean
   error?: string | null
   emptyMessage?: string
+  onRetry?: () => void
 }
 
 export function DataTable<T>({
@@ -23,6 +24,7 @@ export function DataTable<T>({
   loading = false,
   error = null,
   emptyMessage = 'No data found',
+  onRetry,
 }: DataTableProps<T>) {
   if (error) {
     return (
@@ -34,7 +36,14 @@ export function DataTable<T>({
         </div>
         <p className="text-text font-medium">Failed to load data</p>
         <p className="text-sm text-text-muted mt-1">{error}</p>
-        <button className="mt-4 text-sm font-medium text-primary-600 hover:text-primary-700">Try again</button>
+        {onRetry && (
+          <button 
+            onClick={onRetry}
+            className="mt-4 text-sm font-medium text-primary-600 hover:text-primary-700"
+          >
+            Try again
+          </button>
+        )}
       </div>
     )
   }
