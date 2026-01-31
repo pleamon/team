@@ -1,6 +1,9 @@
+'use client'
+
+import { useState } from 'react'
 import { StatusBadge } from '@/components/ui/StatusBadge'
 import { DataTable } from '@/components/ui/DataTable'
-import { transactions } from '@/lib/mock-data'
+import { transactions as mockTransactions } from '@/lib/mock-data'
 import { formatCurrency } from '@/lib/utils'
 import type { Transaction } from '@/types'
 
@@ -75,19 +78,46 @@ const columns = [
 ]
 
 export default function TransactionsPage() {
+  const [viewState, setViewState] = useState<'data' | 'loading' | 'empty' | 'error'>('data')
+  
   const stats = {
-    total: transactions.length,
-    success: transactions.filter((t) => t.status === 'success').length,
-    pending: transactions.filter((t) => t.status === 'pending').length,
-    failed: transactions.filter((t) => t.status === 'failed').length,
+    total: mockTransactions.length,
+    success: mockTransactions.filter((t) => t.status === 'success').length,
+    pending: mockTransactions.filter((t) => t.status === 'pending').length,
+    failed: mockTransactions.filter((t) => t.status === 'failed').length,
   }
+
+  // Derived state for demo
+  const data = viewState === 'empty' ? [] : mockTransactions
+  const isLoading = viewState === 'loading'
+  const error = viewState === 'error' ? 'Failed to fetch transactions from server' : null
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h2 className="text-lg font-semibold text-text">Transaction History</h2>
-        <p className="text-sm text-text-muted mt-0.5">View and manage all payment transactions</p>
+      {/* Header with Dev Controls */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-semibold text-text">Transaction History</h2>
+          <p className="text-sm text-text-muted mt-0.5">View and manage all payment transactions</p>
+        </div>
+        
+        {/* DEV ONLY: State Toggles */}
+        <div className="flex items-center gap-2 bg-gray-100 p-1 rounded-lg">
+          <span className="text-xs font-medium px-2 text-gray-500">Dev:</span>
+          {(['data', 'loading', 'empty', 'error'] as const).map((state) => (
+            <button
+              key={state}
+              onClick={() => setViewState(state)}
+              className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${
+                viewState === state 
+                  ? 'bg-white text-primary-600 shadow-sm' 
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              {state.charAt(0).toUpperCase() + state.slice(1)}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Quick Stats */}
@@ -99,7 +129,7 @@ export default function TransactionsPage() {
           { label: 'Failed', value: stats.failed, color: 'bg-red-50 text-red-700' },
         ].map((s) => (
           <div key={s.label} className={`rounded-lg px-4 py-3 ${s.color}`}>
-            <p className="text-2xl font-bold">{s.value}</p>
+            <p className="text-2xl font-bold">{isLoading ? '-' : s.value}</p>
             <p className="text-xs font-medium opacity-70">{s.label}</p>
           </div>
         ))}
@@ -146,7 +176,12 @@ export default function TransactionsPage() {
 
       {/* Table */}
       <div className="rounded-xl border border-border bg-surface">
-        <DataTable columns={columns} data={transactions} />
+        <DataTable 
+          columns={columns} 
+          data={data} 
+          loading={isLoading}
+          error={error}
+        />
       </div>
     </div>
   )
