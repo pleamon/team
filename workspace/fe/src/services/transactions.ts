@@ -1,5 +1,9 @@
 import type {
+  CreatePaymentPayload,
+  Merchant,
   PagedResult,
+  PaymentResult,
+  PaymentResultStatus,
   RefundRequest,
   Transaction,
   TransactionFilters,
@@ -35,6 +39,15 @@ const merchants = [
   { id: 'm_gamma', name: 'Gamma Ltd' },
   { id: 'm_delta', name: 'Delta Co' },
   { id: 'm_epsilon', name: 'Epsilon LLC' },
+]
+
+const merchantDb: Merchant[] = [
+  { id: 'm_acme', name: 'Acme Corp', limitCents: 2500000, currencies: ['USD', 'EUR'], defaultCurrency: 'USD' },
+  { id: 'm_beta', name: 'Beta Inc', limitCents: 5000000, currencies: ['USD', 'GBP'], defaultCurrency: 'USD' },
+  { id: 'm_gamma', name: 'Gamma Ltd', limitCents: 1000000, currencies: ['USD'], defaultCurrency: 'USD' },
+  { id: 'm_delta', name: 'Delta Co', limitCents: 8000000, currencies: ['USD', 'EUR', 'JPY'], defaultCurrency: 'USD' },
+  { id: 'm_epsilon', name: 'Epsilon LLC', limitCents: 2000000, currencies: ['USD', 'CNY'], defaultCurrency: 'USD' },
+  { id: 'm_zen', name: 'Zenith Market', limitCents: 12000000, currencies: ['USD', 'EUR', 'GBP'], defaultCurrency: 'USD' },
 ]
 
 function buildTimeline(status: TransactionStatus, createdAtISO: string) {
@@ -141,8 +154,159 @@ function generateMockTransactions(): Transaction[] {
 // In-memory mock DB
 let mockDb: Transaction[] = generateMockTransactions()
 
+// pending resolution state: after 3-4 polls, pending -> success/failed
+const pendingResolution = new Map<
+  string,
+  {
+    remaining: number
+    finalStatus: Exclude<PaymentResultStatus, 'pending'>
+    error?: { message: string; code: string }
+  }
+>()
+
 export function listMerchants() {
   return merchants
+}
+
+export async function fetchMerchants(): Promise<Merchant[]> {
+  await delay(250)
+  return merchantDb
+}
+
+function randomOutcome(): PaymentResultStatus {
+  const r = Math.random()
+  if (r < 0.5) return 'success'
+  if (r < 0.8) return 'pending'
+  return 'failed'
+}
+
+function nextError() {
+  const errors = [
+    { code: 'E-4001', message: 'Insufficient funds' },
+    { code: 'E-4012', message: 'Card declined' },
+    { code: 'E-4220', message: 'Invalid recipient details' },
+  ]
+  return pick(errors)
+}
+
+export async function createPayment(
+  data: CreatePaymentPayload,
+): Promise<{ id: string; status: PaymentResultStatus }> {
+  await delay(450)
+
+  const now = new Date()
+  const idx = mockDb.length + 1
+  const id = formatId(now, idx)
+  const merchant = merchantDb.find((m) => m.id === data.merchantId)
+  const merchantName = merchant?.name ?? data.merchantId
+
+  const status = randomOutcome()
+  const feeCents = Math.max(30, Math.round(data.amountCents * 0.029))
+  const netCents = data.amountCents - feeCents
+  const methodLabel =
+    data.method === 'card'
+      ? `Card •••• ${data.card?.number.replace(/\D/g, '').slice(-4) || '0000'}`
+      : data.method === 'bank_transfer'
+        ? 'Bank Transfer'
+        : 'E-Wallet'
+
+  const error = status === 'failed' ? nextError() : undefined
+
+  const tx: Transaction = {
+    id,
+    reference: data.referenceId || `REF-${now.getFullYear()}-${pad(idx, 4)}`,
+    createdAt: toISO(now),
+    merchantId: data.merchantId,
+    merchantName,
+    amountCents: data.amountCents,
+    currency: data.currency,
+    feeCents,
+    netCents,
+    method: methodLabel,
+    network: pick(networks),
+    status: status === 'failed' ? 'failed' : status === 'pending' ? 'pending' : 'success',
+    timeline: buildTimeline(status === 'failed' ? 'failed' : status === 'pending' ? 'pending' : 'success', toISO(now)),
+    raw: {
+      request: { ...data },
+      response: {
+        id,
+        status,
+        feeCents,
+        netCents,
+        error,
+      },
+    },
+  }
+
+  mockDb = [tx, ...mockDb]
+
+  if (status === 'pending') {
+    const finalStatus: 'success' | 'failed' = Math.random() < 0.7 ? 'success' : 'failed'
+    pendingResolution.set(id, {
+      remaining: Math.random() < 0.5 ? 3 : 4,
+      finalStatus,
+      error: finalStatus === 'failed' ? nextError() : undefined,
+    })
+  }
+
+  return { id, status }
+}
+
+export async function fetchPaymentResult(id: string): Promise<PaymentResult | null> {
+  await delay(250)
+  const tx = mockDb.find((t) => t.id === id)
+  if (!tx) return null
+
+  // mutate pending after 3-4 polls
+  if (tx.status === 'pending') {
+    const state = pendingResolution.get(id)
+    if (state) {
+      state.remaining -= 1
+      if (state.remaining <= 0) {
+        pendingResolution.delete(id)
+        const nextStatus: TransactionStatus = state.finalStatus
+        const idx = mockDb.findIndex((t) => t.id === id)
+        const updated: Transaction = {
+          ...tx,
+          status: nextStatus,
+          timeline: buildTimeline(nextStatus, tx.createdAt),
+          raw: {
+            ...tx.raw,
+            response: {
+              ...tx.raw.response,
+              status: nextStatus,
+              error: state.error,
+            },
+          },
+        }
+        if (idx >= 0) mockDb[idx] = updated
+      } else {
+        pendingResolution.set(id, state)
+      }
+    }
+  }
+
+  const latest = mockDb.find((t) => t.id === id)!
+  const payload = latest.raw?.request as CreatePaymentPayload | undefined
+  const resStatus: PaymentResultStatus =
+    latest.status === 'pending' ? 'pending' : latest.status === 'failed' ? 'failed' : 'success'
+
+  const err = (latest.raw?.response as any)?.error as { message: string; code: string } | undefined
+  return {
+    id: latest.id,
+    status: resStatus,
+    createdAt: latest.createdAt,
+    merchantId: latest.merchantId,
+    merchantName: latest.merchantName,
+    amountCents: latest.amountCents,
+    currency: latest.currency,
+    method: payload?.method ?? 'card',
+    referenceId: payload?.referenceId ?? latest.reference,
+    feeCents: latest.feeCents,
+    netCents: latest.netCents,
+    error: resStatus === 'failed' && err ? err : undefined,
+    payload,
+  }
 }
 
 export async function fetchTransactions(

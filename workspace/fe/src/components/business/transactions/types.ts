@@ -49,3 +49,63 @@ export interface RefundRequest {
   reason: 'customer_request' | 'duplicate' | 'fraud' | 'other'
 }
 
+/* ── Create Payment / Result (P0-1) ── */
+export type PaymentMethod = 'card' | 'bank_transfer' | 'e_wallet'
+
+export interface Merchant {
+  id: string
+  name: string
+  /** max allowed amount for this merchant */
+  limitCents: number
+  /** currencies supported by merchant */
+  currencies: string[]
+  /** default currency for new payment */
+  defaultCurrency: string
+}
+
+export interface MetadataItem {
+  key: string
+  value: string
+}
+
+export interface CardDetails {
+  number: string
+  expiry: string // MM/YY
+  cvv: string
+  cardholder: string
+}
+
+export interface CreatePaymentPayload {
+  merchantId: string
+  amountCents: number
+  currency: string
+  referenceId: string
+  description: string
+  method: PaymentMethod
+  card?: CardDetails
+  metadata: MetadataItem[]
+}
+
+export type PaymentResultStatus = 'success' | 'failed' | 'pending'
+
+export interface PaymentErrorInfo {
+  message: string
+  code: string
+}
+
+export interface PaymentResult {
+  id: string
+  status: PaymentResultStatus
+  createdAt: string // ISO
+  merchantId: string
+  merchantName: string
+  amountCents: number
+  currency: string
+  method: PaymentMethod
+  referenceId: string
+  feeCents?: number
+  netCents?: number
+  error?: PaymentErrorInfo
+  /** used for Retry Payment (prefill) */
+  payload?: CreatePaymentPayload
+}
