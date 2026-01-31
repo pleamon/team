@@ -1,5 +1,4 @@
 // projects/psp-admin/src/services/merchant-service.ts
-import { transactions } from '@/lib/mock-data' // Reusing mock data utils if needed, or creating new
 // Mock merchants derived from transactions for now + some extras
 const mockMerchants = [
   { id: 'mch_1', name: 'Acme Corp', region: 'SG', status: 'active', email: 'contact@acme.com', businessType: 'enterprise' },
