@@ -1,18 +1,22 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { StatusBadge } from '@/components/ui/StatusBadge'
 import { DataTable } from '@/components/ui/DataTable'
-import { transactions as mockTransactions } from '@/lib/mock-data'
 import { formatCurrency } from '@/lib/utils'
+import { TransactionService, type FetchTransactionsResponse } from '@/services/transaction-service'
 import type { Transaction } from '@/types'
+import Link from 'next/link'
+import { Search, Filter, Download, ChevronLeft, ChevronRight } from 'lucide-react'
 
 const columns = [
   {
     key: 'id',
     label: 'Transaction ID',
     render: (row: Transaction) => (
-      <span className="font-mono text-xs text-text-secondary">{row.id}</span>
+      <Link href={`/transactions/${row.id}`} className="font-mono text-xs text-primary-600 hover:text-primary-700 hover:underline">
+        {row.id}
+      </Link>
     ),
   },
   {
@@ -62,13 +66,6 @@ const columns = [
     render: (row: Transaction) => <StatusBadge status={row.status} />,
   },
   {
-    key: 'reference',
-    label: 'Reference',
-    render: (row: Transaction) => (
-      <span className="font-mono text-xs text-text-muted">{row.reference}</span>
-    ),
-  },
-  {
     key: 'createdAt',
     label: 'Date',
     render: (row: Transaction) => (
@@ -78,113 +75,146 @@ const columns = [
 ]
 
 export default function TransactionsPage() {
-  const [viewState, setViewState] = useState<'data' | 'loading' | 'empty' | 'error'>('data')
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [response, setResponse] = useState<FetchTransactionsResponse | null>(null)
   
-  const stats = {
-    total: mockTransactions.length,
-    success: mockTransactions.filter((t) => t.status === 'success').length,
-    pending: mockTransactions.filter((t) => t.status === 'pending').length,
-    failed: mockTransactions.filter((t) => t.status === 'failed').length,
+  // Filters
+  const [page, setPage] = useState(1)
+  const [search, setSearch] = useState('')
+  const [status, setStatus] = useState('all')
+  const [type, setType] = useState('all')
+
+  const fetchData = useCallback(async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const res = await TransactionService.getAll({
+        page,
+        limit: 10,
+        search,
+        status: status === 'all' ? undefined : status,
+        type: type === 'all' ? undefined : type,
+      })
+      setResponse(res)
+    } catch (err) {
+      setError('Failed to fetch transactions')
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
+  }, [page, search, status, type])
+
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
+
+  // Debounce search input? For now simple effect dependency
+  
+  const handleRetry = () => {
+    fetchData()
   }
 
-  // Derived state for demo
-  const data = viewState === 'empty' ? [] : mockTransactions
-  const isLoading = viewState === 'loading'
-  const error = viewState === 'error' ? 'Failed to fetch transactions from server' : null
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    setPage(1)
+    fetchData() // Trigger fetch immediately on submit if preferred, currently effect handles it
+  }
 
   return (
     <div className="space-y-6">
-      {/* Header with Dev Controls */}
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-text">Transaction History</h2>
           <p className="text-sm text-text-muted mt-0.5">View and manage all payment transactions</p>
         </div>
-        
-        {/* DEV ONLY: State Toggles (Hidden in Prod) */}
-        {process.env.NODE_ENV !== 'production' && (
-          <div className="flex items-center gap-2 bg-yellow-50 border border-yellow-200 p-1 rounded-lg">
-            <span className="text-xs font-bold px-2 text-yellow-700">DEV TOOL:</span>
-            {(['data', 'loading', 'empty', 'error'] as const).map((state) => (
-              <button
-                key={state}
-                onClick={() => setViewState(state)}
-                className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${
-                  viewState === state 
-                    ? 'bg-white text-primary-600 shadow-sm' 
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-              >
-                {state.charAt(0).toUpperCase() + state.slice(1)}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Quick Stats */}
-      <div className="grid grid-cols-4 gap-4">
-        {[
-          { label: 'Total', value: stats.total, color: 'bg-slate-50 text-slate-700' },
-          { label: 'Success', value: stats.success, color: 'bg-emerald-50 text-emerald-700' },
-          { label: 'Pending', value: stats.pending, color: 'bg-amber-50 text-amber-700' },
-          { label: 'Failed', value: stats.failed, color: 'bg-red-50 text-red-700' },
-        ].map((s) => (
-          <div key={s.label} className={`rounded-lg px-4 py-3 ${s.color}`}>
-            <p className="text-2xl font-bold">{isLoading ? '-' : s.value}</p>
-            <p className="text-xs font-medium opacity-70">{s.label}</p>
-          </div>
-        ))}
       </div>
 
       {/* Filters Row */}
-      <div className="flex items-center gap-3">
-        <div className="relative flex-1">
-          <svg
-            className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-          </svg>
+      <div className="flex items-center gap-3 bg-surface p-3 rounded-xl border border-border shadow-sm">
+        <form onSubmit={handleSearch} className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
           <input
             type="text"
-            placeholder="Search by ID, merchant, reference..."
-            className="w-full rounded-lg border border-border bg-surface pl-9 pr-3 py-2.5 text-sm text-text placeholder:text-text-muted outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100"
+            value={search}
+            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+            placeholder="Search by ID, merchant..."
+            className="w-full rounded-lg border border-border bg-gray-50 pl-9 pr-3 py-2 text-sm text-text placeholder:text-text-muted outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100 transition-all"
           />
+        </form>
+        
+        <div className="h-8 w-px bg-border mx-1" />
+
+        <div className="flex items-center gap-2">
+          <Filter className="h-4 w-4 text-text-muted" />
+          <select 
+            value={status}
+            onChange={(e) => { setStatus(e.target.value); setPage(1); }}
+            className="rounded-lg border border-border bg-gray-50 px-3 py-2 text-sm text-text-secondary outline-none focus:border-primary-400 cursor-pointer hover:bg-white transition-colors"
+          >
+            <option value="all">All Status</option>
+            <option value="success">Success</option>
+            <option value="pending">Pending</option>
+            <option value="failed">Failed</option>
+            <option value="refunded">Refunded</option>
+          </select>
         </div>
-        <select className="rounded-lg border border-border bg-surface px-3 py-2.5 text-sm text-text-secondary outline-none focus:border-primary-400">
-          <option>All Status</option>
-          <option>Success</option>
-          <option>Pending</option>
-          <option>Failed</option>
-          <option>Refunded</option>
-        </select>
-        <select className="rounded-lg border border-border bg-surface px-3 py-2.5 text-sm text-text-secondary outline-none focus:border-primary-400">
-          <option>All Types</option>
-          <option>Payment</option>
-          <option>Payout</option>
-          <option>Refund</option>
-        </select>
-        <button className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-3 py-2.5 text-sm font-medium text-text-secondary transition-colors hover:bg-surface-hover">
-          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-          </svg>
+
+        <div className="flex items-center gap-2">
+          <select 
+            value={type}
+            onChange={(e) => { setType(e.target.value); setPage(1); }}
+            className="rounded-lg border border-border bg-gray-50 px-3 py-2 text-sm text-text-secondary outline-none focus:border-primary-400 cursor-pointer hover:bg-white transition-colors"
+          >
+            <option value="all">All Types</option>
+            <option value="payment">Payment</option>
+            <option value="payout">Payout</option>
+            <option value="refund">Refund</option>
+          </select>
+        </div>
+        
+        <button className="ml-auto inline-flex items-center gap-2 rounded-lg border border-border bg-white px-3 py-2 text-sm font-medium text-text-secondary transition-colors hover:bg-gray-50">
+          <Download className="h-4 w-4" />
           Export
         </button>
       </div>
 
       {/* Table */}
-      <div className="rounded-xl border border-border bg-surface">
+      <div className="rounded-xl border border-border bg-surface shadow-sm overflow-hidden">
         <DataTable 
           columns={columns} 
-          data={data} 
-          loading={isLoading}
+          data={response?.data || []} 
+          loading={loading}
           error={error}
-          onRetry={() => setViewState('loading')}
+          onRetry={handleRetry}
         />
+        
+        {/* Pagination */}
+        {response && !loading && !error && (
+           <div className="flex items-center justify-between px-4 py-3 border-t border-border bg-gray-50/50">
+             <div className="text-xs text-text-muted">
+               Showing <span className="font-medium">{(response.meta.page - 1) * response.meta.limit + 1}</span> to <span className="font-medium">{Math.min(response.meta.page * response.meta.limit, response.meta.total)}</span> of <span className="font-medium">{response.meta.total}</span> results
+             </div>
+             <div className="flex items-center gap-2">
+               <button
+                 onClick={() => setPage(p => Math.max(1, p - 1))}
+                 disabled={page === 1}
+                 className="p-1 rounded-md hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed text-text-secondary"
+               >
+                 <ChevronLeft className="h-4 w-4" />
+               </button>
+               <span className="text-xs font-medium text-text px-2">Page {page} of {response.meta.totalPages}</span>
+               <button
+                 onClick={() => setPage(p => Math.min(response.meta.totalPages, p + 1))}
+                 disabled={page === response.meta.totalPages}
+                 className="p-1 rounded-md hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed text-text-secondary"
+               >
+                 <ChevronRight className="h-4 w-4" />
+               </button>
+             </div>
+           </div>
+        )}
       </div>
     </div>
   )
