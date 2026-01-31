@@ -53,6 +53,12 @@ export interface TableProps<T = any> {
   sortDirection?: SortDirection
   /** 自定义类名 */
   className?: string
+
+  /** 行点击（用于整行可导航的业务表格） */
+  onRowClick?: (row: T) => void
+
+  /** 行的 aria-label（用于无障碍读屏） */
+  getRowAriaLabel?: (row: T) => string
   /** 分页（简单） */
   pagination?: {
     current: number
