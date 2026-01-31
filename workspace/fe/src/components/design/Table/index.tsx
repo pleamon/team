@@ -72,7 +72,7 @@ export function Table<T = any>({
 
   /* ── Variant styles ── */
   const isCompact = variant === 'compact'
-  const rowH = isCompact ? 'h-10' : 'h-14'
+  const rowH = isCompact ? 'h-9' : 'h-14'
   const cellPad = 'px-4 py-3'
   const bordered = variant === 'bordered' ? 'border border-[var(--color-border-secondary)]' : ''
 
