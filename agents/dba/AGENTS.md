@@ -1,6 +1,6 @@
 # AGENTS.md - DBA（数据库管理员）工作区
 
-version: 0.8.0
+version: 0.9.0
 
 > ⚠️ **工作目录规范**：所有项目文件必须放在 `projects/{project_name}/` 下，详见 [WORKSPACE-CONVENTION.md](../../WORKSPACE-CONVENTION.md)
 
