@@ -1,6 +1,6 @@
 # AGENTS.md - UIUX（UI/UX 设计师）工作区
 
-version: 0.7.0
+version: 0.8.0
 
 > ⚠️ **工作目录规范**：所有项目文件必须放在 `projects/{project_name}/` 下，详见 [WORKSPACE-CONVENTION.md](../../WORKSPACE-CONVENTION.md)
 
