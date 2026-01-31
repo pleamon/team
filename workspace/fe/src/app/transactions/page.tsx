@@ -121,9 +121,12 @@ export default function TransactionsListPage() {
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-[var(--font-2xl)] font-semibold text-[var(--color-gray-900)]">Transactions</h1>
-        <Button variant="secondary" icon={DownloadIcon} onClick={exportCsv} loading={exporting}>
-          Export
-        </Button>
+        <div className="flex items-center gap-[var(--space-3)]">
+          <Button onClick={() => router.push('/transactions/new')}>Create Payment</Button>
+          <Button variant="secondary" icon={DownloadIcon} onClick={exportCsv} loading={exporting}>
+            Export
+          </Button>
+        </div>
       </div>
 
       {/* Filter Bar */}
@@ -228,4 +231,3 @@ export default function TransactionsListPage() {
     </div>
   )
 }
-
